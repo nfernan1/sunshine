@@ -71,27 +71,24 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-//        List<String> weatherArray = new ArrayList<String>();
-//        weatherArray.add("Today-Sunny-88/63");
-//        weatherArray.add("Tomorrow-Foggy-70/46");
-//        weatherArray.add("Weds-Cloudy-872/63");
-//        weatherArray.add("Thurs-Rainy-64/53");
-//        weatherArray.add("Friday-Foggy-70/46");
-//        weatherArray.add("Sat-Sunny-90/75");
-//
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-//                R.layout.list_item_forecast, R.id.list_item_forecast_textview,
-//                weatherArray);
-        List<String> weeklyWeatherForecast = ;
-        mForecastAdapter = new ArrayAdapter<String>(getActivity(),
+        List<String> weatherArray = new ArrayList<String>();
+        weatherArray.add("Today-Sunny-88/63");
+        weatherArray.add("Tomorrow-Foggy-70/46");
+        weatherArray.add("Weds-Cloudy-872/63");
+        weatherArray.add("Thurs-Rainy-64/53");
+        weatherArray.add("Friday-Foggy-70/46");
+        weatherArray.add("Sat-Sunny-90/75");
+
+        mForecastAdapter = new ArrayAdapter<String>(
+                getActivity(),
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
-                weaklyWeatherForecast);
+                weatherArray);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         ListView weeklyForecast = (ListView) rootView.findViewById(R.id.listview_forecast);
-        weeklyForecast.setAdapter(adapter);
+        weeklyForecast.setAdapter(mForecastAdapter);
 
         return rootView;
     }
@@ -292,10 +289,20 @@ public class MainActivityFragment extends Fragment {
                 return getWeatherDataFromJson(forecastDataInJSON, numDays);
             } catch (JSONException e) {
                 Log.e(Log_tag, e.getMessage(), e);
-                    e.printStackTrace();
+                e.printStackTrace();
             }
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String[] strings) {
+            if(strings != null){
+                mForecastAdapter.clear();
+                for(String dayForecastStr : strings){
+                    mForecastAdapter.add(dayForecastStr);
+                }
+            }
         }
     }
 
