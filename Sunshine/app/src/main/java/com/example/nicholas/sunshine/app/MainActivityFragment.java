@@ -12,8 +12,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,6 +61,10 @@ public class MainActivityFragment extends Fragment {
         int itemID = item.getItemId();
         if(itemID == R.id.action_refresh){
             FetchWeatherTask weatherTask = new FetchWeatherTask();
+
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+//                weatherTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
             weatherTask.execute("94043");
             return true;
         }
@@ -72,12 +78,12 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         List<String> weatherArray = new ArrayList<String>();
-        weatherArray.add("Today-Sunny-88/63");
-        weatherArray.add("Tomorrow-Foggy-70/46");
-        weatherArray.add("Weds-Cloudy-872/63");
-        weatherArray.add("Thurs-Rainy-64/53");
-        weatherArray.add("Friday-Foggy-70/46");
-        weatherArray.add("Sat-Sunny-90/75");
+//        weatherArray.add("Today-Sunny-88/63");
+//        weatherArray.add("Tomorrow-Foggy-70/46");
+//        weatherArray.add("Weds-Cloudy-872/63");
+//        weatherArray.add("Thurs-Rainy-64/53");
+//        weatherArray.add("Friday-Foggy-70/46");
+//        weatherArray.add("Sat-Sunny-90/75");
 
         mForecastAdapter = new ArrayAdapter<String>(
                 getActivity(),
@@ -89,6 +95,13 @@ public class MainActivityFragment extends Fragment {
 
         ListView weeklyForecast = (ListView) rootView.findViewById(R.id.listview_forecast);
         weeklyForecast.setAdapter(mForecastAdapter);
+        weeklyForecast.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l){
+                String forecast = mForecastAdapter.getItem(position);
+                Toast.makeText(getActivity(), forecast, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         return rootView;
     }
@@ -206,7 +219,7 @@ public class MainActivityFragment extends Fragment {
             HttpURLConnection urlConnection = null;
             BufferedReader inputReader = null;
 
-            String forecastDataInJSON;
+            String forecastDataInJSON = null;
             String format = "json";
             String units = "metric";
             int numDays = 7;
@@ -299,9 +312,7 @@ public class MainActivityFragment extends Fragment {
         protected void onPostExecute(String[] strings) {
             if(strings != null){
                 mForecastAdapter.clear();
-                for(String dayForecastStr : strings){
-                    mForecastAdapter.add(dayForecastStr);
-                }
+                mForecastAdapter.addAll(strings);
             }
         }
     }
