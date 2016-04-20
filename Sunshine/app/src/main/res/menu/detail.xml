@@ -5,5 +5,5 @@
     tools:context="com.example.nicholas.sunshine.app.DetailActivity">
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsActions="never"/>
+        android:orderInCategory="100" />
 </menu>

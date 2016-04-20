@@ -1,5 +1,6 @@
 package com.example.nicholas.sunshine.app;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -78,12 +78,12 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         List<String> weatherArray = new ArrayList<String>();
-//        weatherArray.add("Today-Sunny-88/63");
-//        weatherArray.add("Tomorrow-Foggy-70/46");
-//        weatherArray.add("Weds-Cloudy-872/63");
-//        weatherArray.add("Thurs-Rainy-64/53");
-//        weatherArray.add("Friday-Foggy-70/46");
-//        weatherArray.add("Sat-Sunny-90/75");
+        weatherArray.add("Today-Sunny-88/63");
+        weatherArray.add("Tomorrow-Foggy-70/46");
+        weatherArray.add("Weds-Cloudy-872/63");
+        weatherArray.add("Thurs-Rainy-64/53");
+        weatherArray.add("Friday-Foggy-70/46");
+        weatherArray.add("Sat-Sunny-90/75");
 
         mForecastAdapter = new ArrayAdapter<String>(
                 getActivity(),
@@ -99,9 +99,12 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l){
                 String forecast = mForecastAdapter.getItem(position);
-                Toast.makeText(getActivity(), forecast, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, forecast);
+                startActivity(intent);
             }
         });
+
 
         return rootView;
     }
