@@ -1,9 +1,11 @@
 package com.example.nicholas.sunshine.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -54,18 +56,20 @@ public class MainActivityFragment extends Fragment {
         inflater.inflate(R.menu.forecastfragment, menu);
     }
 
+    private void weatherUpdate(){
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+        weatherTask.execute(location);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         // Handles action bar item clicks
         // Home/Up button clicks are handled automatically as long as there's a parent activity in AndroidManifest.xml
         int itemID = item.getItemId();
         if(itemID == R.id.action_refresh){
-            FetchWeatherTask weatherTask = new FetchWeatherTask();
-
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-//                weatherTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-            weatherTask.execute("94043");
+            weatherUpdate();
             return true;
         }
 
@@ -74,17 +78,16 @@ public class MainActivityFragment extends Fragment {
     }
 
     @Override
+    public void onStart(){
+        super.onStart();
+        weatherUpdate();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         List<String> weatherArray = new ArrayList<String>();
-        weatherArray.add("Today-Sunny-88/63");
-        weatherArray.add("Tomorrow-Foggy-70/46");
-        weatherArray.add("Weds-Cloudy-872/63");
-        weatherArray.add("Thurs-Rainy-64/53");
-        weatherArray.add("Friday-Foggy-70/46");
-        weatherArray.add("Sat-Sunny-90/75");
-
         mForecastAdapter = new ArrayAdapter<String>(
                 getActivity(),
                 R.layout.list_item_forecast,
@@ -95,7 +98,7 @@ public class MainActivityFragment extends Fragment {
 
         ListView weeklyForecast = (ListView) rootView.findViewById(R.id.listview_forecast);
         weeklyForecast.setAdapter(mForecastAdapter);
-        weeklyForecast.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+                weeklyForecast.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l){
                 String forecast = mForecastAdapter.getItem(position);
